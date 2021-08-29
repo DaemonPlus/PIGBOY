@@ -1,0 +1,317 @@
+[gd_scene load_steps=27 format=2]
+
+[sub_resource type="VisualShaderNodeInput" id=1]
+input_name = "light_pass"
+
+[sub_resource type="VisualShaderNodeSwitch" id=2]
+
+[sub_resource type="VisualShaderNodeTexture" id=3]
+source = 1
+
+[sub_resource type="VisualShaderNodeInput" id=4]
+input_name = "screen_uv"
+
+[sub_resource type="VisualShaderNodeColorOp" id=5]
+
+[sub_resource type="VisualShaderNodeInput" id=6]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeTexture" id=7]
+source = 2
+
+[sub_resource type="VisualShaderNodeInput" id=8]
+input_name = "light_color"
+
+[sub_resource type="VisualShader" id=9]
+code = "shader_type canvas_item;
+render_mode blend_disabled;
+
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:10
+	float n_out10p0 = float(AT_LIGHT_PASS ? 1.0 : 0.0);
+
+// Input:16
+	vec3 n_out16p0 = vec3(SCREEN_UV, 0.0);
+
+// Texture:15
+	vec3 n_out15p0;
+	float n_out15p1;
+	{
+		vec4 _tex_read = textureLod(SCREEN_TEXTURE, n_out16p0.xy, 0.0);
+		n_out15p0 = _tex_read.rgb;
+		n_out15p1 = _tex_read.a;
+	}
+
+// Input:5
+	vec3 n_out5p0 = vec3(UV, 0.0);
+
+// Texture:7
+	vec3 n_out7p0;
+	float n_out7p1;
+	{
+		vec4 _tex_read = texture(TEXTURE, n_out5p0.xy);
+		n_out7p0 = _tex_read.rgb;
+		n_out7p1 = _tex_read.a;
+	}
+
+// ColorOp:23
+	vec3 n_out23p0 = vec3(1.0) - (vec3(1.0) - n_out15p0) * (vec3(1.0) - n_out7p0);
+
+// VectorSwitch:14
+	vec3 n_out14p0;
+	if(n_out10p0 > 0.0 ? true : false)
+	{
+		n_out14p0 = n_out23p0;
+	}
+	else
+	{
+		n_out14p0 = n_out7p0;
+	}
+
+// Output:0
+	COLOR.rgb = n_out14p0;
+	COLOR.a = n_out7p1;
+
+}
+
+void light() {
+// Input:2
+	vec3 n_out2p0 = LIGHT_COLOR.rgb;
+
+// Output:0
+	LIGHT.rgb = n_out2p0;
+
+}
+"
+mode = 1
+modes/blend = 5
+flags/light_only = false
+nodes/fragment/0/position = Vector2( 1020, 240 )
+nodes/fragment/5/node = SubResource( 6 )
+nodes/fragment/5/position = Vector2( 40, 280 )
+nodes/fragment/7/node = SubResource( 7 )
+nodes/fragment/7/position = Vector2( 280, 320 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( 40, 80 )
+nodes/fragment/14/node = SubResource( 2 )
+nodes/fragment/14/position = Vector2( 680, 180 )
+nodes/fragment/15/node = SubResource( 3 )
+nodes/fragment/15/position = Vector2( 280, 180 )
+nodes/fragment/16/node = SubResource( 4 )
+nodes/fragment/16/position = Vector2( 20, 180 )
+nodes/fragment/23/node = SubResource( 5 )
+nodes/fragment/23/position = Vector2( 500, 80 )
+nodes/fragment/connections = PoolIntArray( 5, 0, 7, 0, 10, 0, 14, 0, 16, 0, 15, 0, 15, 0, 23, 0, 7, 0, 23, 1, 14, 0, 0, 0, 7, 0, 14, 2, 23, 0, 14, 1, 7, 1, 0, 1 )
+nodes/light/0/position = Vector2( 500, 80 )
+nodes/light/2/node = SubResource( 8 )
+nodes/light/2/position = Vector2( 220, 80 )
+nodes/light/connections = PoolIntArray( 2, 0, 0, 0 )
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = SubResource( 9 )
+
+[sub_resource type="Animation" id=11]
+resource_name = "anim1"
+length = 5.0
+loop = true
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("Viewport/Custom2D:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 55, -0.25, 0, 0.25, 0, 0.559654, -0.25, 0, 0.25, 0, 113.972, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2, 5 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("Viewport/Custom2D:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 25, -0.25, 0, 0.25, 0, 125.796, -0.25, 0, 0.25, 0, 178.094, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 2, 5 )
+}
+
+[sub_resource type="OpenSimplexNoise" id=12]
+
+[sub_resource type="NoiseTexture" id=13]
+flags = 3
+width = 16
+noise = SubResource( 12 )
+
+[sub_resource type="AtlasTexture" id=14]
+flags = 3
+atlas = SubResource( 13 )
+region = Rect2( 0, 0, 128, 128 )
+
+[sub_resource type="OpenSimplexNoise" id=15]
+
+[sub_resource type="NoiseTexture" id=16]
+width = 128
+height = 128
+noise = SubResource( 15 )
+
+[sub_resource type="OccluderPolygon2D" id=17]
+closed = false
+polygon = PoolVector2Array( -42.1672, 25.7201, -0.167198, -1.27988, 95.8328, 10.7201, 58.8328, 104.72, -22.1672, 90.7201, -38.1672, 14.7201 )
+
+[sub_resource type="Gradient" id=18]
+colors = PoolColorArray( 0, 0, 0, 1, 1, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=19]
+gradient = SubResource( 18 )
+
+[sub_resource type="ArrayMesh" id=20]
+surfaces/0 = {
+"aabb": AABB( 0, 0, 0, 128, 128, 0 ),
+"array_data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 60, 0, 0, 0, 67, 0, 0, 0, 67, 0, 60, 0, 60 ),
+"array_index_data": PoolByteArray(  ),
+"blend_shape_data": [  ],
+"format": 359441,
+"index_count": 0,
+"primitive": 4,
+"skeleton_aabb": [  ],
+"vertex_count": 3
+}
+
+[sub_resource type="MeshTexture" id=21]
+mesh = SubResource( 20 )
+base_texture = SubResource( 19 )
+image_size = Vector2( 128, 128 )
+
+[sub_resource type="OpenSimplexNoise" id=22]
+
+[sub_resource type="NoiseTexture" id=23]
+noise = SubResource( 22 )
+
+[sub_resource type="MeshTexture" id=24]
+mesh = SubResource( 20 )
+base_texture = SubResource( 23 )
+image_size = Vector2( 128, 128 )
+
+[sub_resource type="GDScript" id=25]
+script/source = "extends Node2D
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#	pass
+
+
+func _on_Custom2D_draw():
+	draw_circle(position, 22.0, Color(1,0,1))
+	draw_circle(position - Vector2(15,15), 11.0, Color(1,1,0,0.5))
+	draw_circle(position + Vector2(15,15), 11.0, Color(0,1,1,0.5))
+	pass # Replace with function body.
+"
+
+[sub_resource type="ViewportTexture" id=26]
+viewport_path = NodePath("Viewport")
+
+[node name="Main" type="Node2D"]
+material = SubResource( 10 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "anim1"
+anims/anim1 = SubResource( 11 )
+
+[node name="GrayWall" type="Sprite" parent="."]
+position = Vector2( 33.1493, 196.338 )
+texture = SubResource( 14 )
+centered = false
+region_rect = Rect2( 0, 0, 32, 32 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Light2D" type="Light2D" parent="GrayWall"]
+light_mask = 2
+position = Vector2( 64, 64 )
+texture = SubResource( 16 )
+mode = 2
+range_item_cull_mask = 2
+shadow_enabled = true
+shadow_item_cull_mask = 2
+__meta__ = {
+"_edit_lock_": true,
+"_editor_description_": ""
+}
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="GrayWall"]
+visible = false
+light_mask = 2
+position = Vector2( 39.0179, 14.4599 )
+occluder = SubResource( 17 )
+light_mask = 2
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="TriRed" type="Sprite" parent="."]
+light_mask = 2
+use_parent_material = true
+position = Vector2( 110, 173 )
+texture = SubResource( 21 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="TriNoise" type="Sprite" parent="."]
+light_mask = 2
+use_parent_material = true
+position = Vector2( 173, 388 )
+rotation = 3.64948
+texture = SubResource( 24 )
+centered = false
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="TriNoise2" type="Sprite" parent="."]
+light_mask = 2
+use_parent_material = true
+position = Vector2( -7, 241 )
+rotation = -0.947714
+texture = SubResource( 24 )
+centered = false
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Viewport" type="Viewport" parent="."]
+size = Vector2( 256, 256 )
+transparent_bg = true
+hdr = false
+usage = 0
+render_target_v_flip = true
+
+[node name="Custom2D" type="Node2D" parent="Viewport"]
+position = Vector2( 0.559654, 125.796 )
+script = SubResource( 25 )
+
+[node name="ViewportSprite" type="Sprite" parent="."]
+light_mask = 2
+use_parent_material = true
+position = Vector2( 130, 198 )
+z_index = 1
+texture = SubResource( 26 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[connection signal="draw" from="Viewport/Custom2D" to="Viewport/Custom2D" method="_on_Custom2D_draw"]

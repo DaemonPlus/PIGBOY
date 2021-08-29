@@ -1,0 +1,215 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://src/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/WorldTimer.gd" type="Script" id=2]
+[ext_resource path="res://assets/sfx/splash-01.wav" type="AudioStream" id=3]
+[ext_resource path="res://assets/fonts/m5x7.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://addons/newgrounds/NewGroundsAPI.gd" type="Script" id=5]
+[ext_resource path="res://assets/sprites/gameover.png" type="Texture" id=6]
+[ext_resource path="res://assets/sprites/winner.png" type="Texture" id=7]
+[ext_resource path="res://assets/sprites/sprites.png" type="Texture" id=8]
+[ext_resource path="res://src/CRT Effect.tscn" type="PackedScene" id=9]
+[ext_resource path="res://assets/sfx/collect-01.wav" type="AudioStream" id=11]
+[ext_resource path="res://assets/sfx/startup-01.wav" type="AudioStream" id=12]
+[ext_resource path="res://assets/sprites/start.png" type="Texture" id=13]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+#func _ready() -> void:
+	#$NewGroundsAPI.Gateway.getDatetime()
+	#var result = yield($NewGroundsAPI, 'ng_request_complete')
+	#if $NewGroundsAPI.is_ok(result):
+	#	print('Datetime: ' + str(result.response.datetime))
+	#else:
+	#	print('Error: ' + result.error)
+
+func _on_WorldTimer_autokill() -> void:
+	if Global.score >= Global.WINSCORE:
+		print(\"Sending score! IT IS: \" + str(Global.highscore))
+		$NewGroundsAPI.ScoreBoard.postScore(Global.highscore, 10691)
+		$NewGroundsAPI.Medal.unlock(64960)
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends AudioStreamPlayer
+
+func _on_WorldTimer_firstrun() -> void:
+	play()
+"
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 8 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="GDScript" id=4]
+script/source = "extends AudioStreamPlayer
+
+func _on_score_increase() -> void:
+	play()
+"
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 8 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="GDScript" id=7]
+script/source = "extends AudioStreamPlayer
+
+func _on_Player_water_got() -> void:
+	play()
+"
+
+[sub_resource type="DynamicFont" id=8]
+font_data = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=9]
+script/source = "extends Label
+
+const timeregen := 1.0
+var timeregentime := 30.0
+var tmptime := 0.0
+
+func _ready() -> void:
+	self.text = str(30)
+
+func _process(delta: float) -> void:
+	if Global.firstrun:
+		if tmptime < Global.WORLDTIMELIMIT:
+			timeregentime += delta
+			if timeregentime >= 0.08:
+				timeregentime = 0
+				tmptime += timeregen
+				self.text = str(tmptime)
+	if int(text) == 30:
+		set_process(false)
+
+func _on_WorldTimer_timeout() -> void:
+	self.text = str(abs(Global.worldtime-30))
+"
+
+[sub_resource type="DynamicFont" id=10]
+font_data = ExtResource( 4 )
+
+[sub_resource type="GDScript" id=11]
+script/source = "extends Label
+
+func _ready() -> void:
+	self.text = \"0 \"
+
+func _on_score_increase() -> void:
+	self.text = str(Global.score)
+"
+
+[node name="World" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="CRT Effect" parent="." instance=ExtResource( 9 )]
+
+[node name="NewGroundsAPI" type="HTTPRequest" parent="."]
+use_threads = true
+script = ExtResource( 5 )
+verbose = true
+applicationId = "52865:4lTB1lHq"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_top = 152.0
+margin_right = 256.0
+margin_bottom = 160.0
+color = Color( 0.156863, 0.054902, 0.0431373, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WorldTimer" type="Timer" parent="."]
+script = ExtResource( 2 )
+
+[node name="StartupSound" type="AudioStreamPlayer" parent="WorldTimer"]
+stream = ExtResource( 12 )
+script = SubResource( 2 )
+
+[node name="Pigs" type="Sprite" parent="."]
+position = Vector2( 247, 144 )
+texture = SubResource( 3 )
+
+[node name="Chip" type="AudioStreamPlayer" parent="Pigs"]
+stream = ExtResource( 3 )
+script = SubResource( 4 )
+
+[node name="Well" type="Sprite" parent="."]
+position = Vector2( 9, 144 )
+texture = SubResource( 5 )
+
+[node name="Chip" type="AudioStreamPlayer" parent="Well"]
+stream = ExtResource( 11 )
+script = SubResource( 7 )
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 223, 144 )
+
+[node name="UI" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI"]
+margin_left = 1.0
+margin_right = 255.0
+margin_bottom = 14.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TimeLabel" type="Label" parent="UI/HBoxContainer"]
+margin_right = 125.0
+margin_bottom = 13.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 8 )
+custom_colors/font_color = Color( 0.211765, 0.109804, 0.0901961, 1 )
+align = 1
+script = SubResource( 9 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScoreLabel" type="Label" parent="UI/HBoxContainer"]
+margin_left = 129.0
+margin_right = 254.0
+margin_bottom = 13.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 10 )
+custom_colors/font_color = Color( 0.211765, 0.109804, 0.0901961, 1 )
+text = "0"
+align = 1
+script = SubResource( 11 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GameoverSprite" type="Sprite" parent="."]
+visible = false
+position = Vector2( 126, 80 )
+z_index = 1
+texture = ExtResource( 6 )
+
+[node name="WinnerSprite" type="Sprite" parent="."]
+visible = false
+position = Vector2( 130, 80 )
+z_index = 1
+texture = ExtResource( 7 )
+
+[node name="StartSprite" type="Sprite" parent="."]
+visible = false
+position = Vector2( 130, 81 )
+texture = ExtResource( 13 )
+
+[connection signal="autokill" from="WorldTimer" to="." method="_on_WorldTimer_autokill"]
+[connection signal="autokill" from="WorldTimer" to="Player" method="_on_WorldTimer_autokill"]
+[connection signal="timeout" from="WorldTimer" to="UI/HBoxContainer/TimeLabel" method="_on_WorldTimer_timeout"]
+[connection signal="gameover" from="Player" to="WorldTimer" method="_on_Player_gameover"]
+[connection signal="gameover" from="Player" to="." method="_on_gameover"]
+[connection signal="score_increase" from="Player" to="Pigs/Chip" method="_on_score_increase"]
+[connection signal="score_increase" from="Player" to="UI/HBoxContainer/ScoreLabel" method="_on_score_increase"]
+[connection signal="water_got" from="Player" to="Well/Chip" method="_on_Player_water_got"]
