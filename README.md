@@ -23,6 +23,7 @@ This game was made for the Newground's [ListJam](https://www.newgrounds.com/bbs/
 [Daniel Linssen](https://managore.itch.io/m5x7) - m5x7 Font
 
 [Godot](https://godotengine.org/license) - Engine
+
 [Third-Party Godot Liceneses](https://github.com/godotengine/godot/blob/master/COPYRIGHT.txt)
 
 
