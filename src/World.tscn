@@ -208,8 +208,8 @@ visible = false
 position = Vector2( 130, 81 )
 texture = ExtResource( 13 )
 
-[connection signal="autokill" from="WorldTimer" to="Player" method="_on_WorldTimer_autokill"]
 [connection signal="autokill" from="WorldTimer" to="." method="_on_WorldTimer_autokill"]
+[connection signal="autokill" from="WorldTimer" to="Player" method="_on_WorldTimer_autokill"]
 [connection signal="timeout" from="WorldTimer" to="UI/HBoxContainer/TimeLabel" method="_on_WorldTimer_timeout"]
 [connection signal="gameover" from="Player" to="." method="_on_gameover"]
 [connection signal="gameover" from="Player" to="WorldTimer" method="_on_Player_gameover"]
