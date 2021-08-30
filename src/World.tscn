@@ -27,8 +27,11 @@ script/source = "extends Node2D
 func _on_WorldTimer_autokill() -> void:
 	if Global.score >= Global.WINSCORE:
 		print(\"Sending score! IT IS: \" + str(Global.highscore))
+		
 		$NewGroundsAPI.ScoreBoard.postScore(Global.highscore, 10691)
+		var result = yield($NewGroundsAPI, 'ng_request_complete')
 		$NewGroundsAPI.Medal.unlock(64960)
+		result = yield($NewGroundsAPI, 'ng_request_complete')
 "
 
 [sub_resource type="GDScript" id=2]
@@ -53,17 +56,17 @@ func _on_score_increase() -> void:
 atlas = ExtResource( 8 )
 region = Rect2( 32, 0, 16, 16 )
 
-[sub_resource type="GDScript" id=7]
+[sub_resource type="GDScript" id=6]
 script/source = "extends AudioStreamPlayer
 
 func _on_Player_water_got() -> void:
 	play()
 "
 
-[sub_resource type="DynamicFont" id=8]
+[sub_resource type="DynamicFont" id=7]
 font_data = ExtResource( 4 )
 
-[sub_resource type="GDScript" id=9]
+[sub_resource type="GDScript" id=8]
 script/source = "extends Label
 
 const timeregen := 1.0
@@ -88,10 +91,10 @@ func _on_WorldTimer_timeout() -> void:
 	self.text = str(abs(Global.worldtime-30))
 "
 
-[sub_resource type="DynamicFont" id=10]
+[sub_resource type="DynamicFont" id=9]
 font_data = ExtResource( 4 )
 
-[sub_resource type="GDScript" id=11]
+[sub_resource type="GDScript" id=10]
 script/source = "extends Label
 
 func _ready() -> void:
@@ -142,7 +145,7 @@ texture = SubResource( 5 )
 
 [node name="Chip" type="AudioStreamPlayer" parent="Well"]
 stream = ExtResource( 11 )
-script = SubResource( 7 )
+script = SubResource( 6 )
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
 position = Vector2( 223, 144 )
@@ -166,10 +169,10 @@ __meta__ = {
 margin_right = 125.0
 margin_bottom = 13.0
 size_flags_horizontal = 3
-custom_fonts/font = SubResource( 8 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color = Color( 0.211765, 0.109804, 0.0901961, 1 )
 align = 1
-script = SubResource( 9 )
+script = SubResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -179,11 +182,11 @@ margin_left = 129.0
 margin_right = 254.0
 margin_bottom = 13.0
 size_flags_horizontal = 3
-custom_fonts/font = SubResource( 10 )
+custom_fonts/font = SubResource( 9 )
 custom_colors/font_color = Color( 0.211765, 0.109804, 0.0901961, 1 )
 text = "0"
 align = 1
-script = SubResource( 11 )
+script = SubResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -205,11 +208,11 @@ visible = false
 position = Vector2( 130, 81 )
 texture = ExtResource( 13 )
 
-[connection signal="autokill" from="WorldTimer" to="." method="_on_WorldTimer_autokill"]
 [connection signal="autokill" from="WorldTimer" to="Player" method="_on_WorldTimer_autokill"]
+[connection signal="autokill" from="WorldTimer" to="." method="_on_WorldTimer_autokill"]
 [connection signal="timeout" from="WorldTimer" to="UI/HBoxContainer/TimeLabel" method="_on_WorldTimer_timeout"]
-[connection signal="gameover" from="Player" to="WorldTimer" method="_on_Player_gameover"]
 [connection signal="gameover" from="Player" to="." method="_on_gameover"]
+[connection signal="gameover" from="Player" to="WorldTimer" method="_on_Player_gameover"]
 [connection signal="score_increase" from="Player" to="Pigs/Chip" method="_on_score_increase"]
 [connection signal="score_increase" from="Player" to="UI/HBoxContainer/ScoreLabel" method="_on_score_increase"]
 [connection signal="water_got" from="Player" to="Well/Chip" method="_on_Player_water_got"]

@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://src/Player.gd" type="Script" id=1]
 [ext_resource path="res://assets/sfx/gameover-01.wav" type="AudioStream" id=2]
 [ext_resource path="res://assets/sfx/hit-02.wav" type="AudioStream" id=3]
 [ext_resource path="res://assets/sprites/sprites.png" type="Texture" id=4]
+[ext_resource path="res://assets/sfx/winner-01.wav" type="AudioStream" id=5]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 4 )
@@ -51,6 +52,9 @@ shape = SubResource( 5 )
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 visible = false
+
+[node name="WinSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
 
 [node name="GameOverSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 2 )

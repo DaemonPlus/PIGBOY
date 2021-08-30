@@ -8,6 +8,7 @@ signal autokill
 
 func _ready():
 	self.connect("timeout", self, "_on_timeout")
+	Global.won = false
 	if Global.firstrun:
 		$"../Player".hide()
 		$"../StartSprite".show()
@@ -31,6 +32,7 @@ func _on_timeout():
 		spawn_crows(randi() % 2)
 	if Global.worldtime == Global.WORLDTIMELIMIT:
 		if Global.score >= Global.WINSCORE:
+			Global.won = true
 			$"../WinnerSprite".show()
 		else:
 			$"../GameoverSprite".show()

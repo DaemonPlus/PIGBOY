@@ -14,19 +14,15 @@ func set_direction(dir: float):
 	direction.x = dir
 	
 func _on_WorldTimer_timeout():
-	position += direction * Global.GRIDSIZE
-	if direction.x == -1.0:
-		$AnimatedSprite.play("left")
-	else:
-		$AnimatedSprite.play("right")
-	#if position.x < 0+16:
-	#	direction = Vector2(1, 1)
-	#elif position.x > 480-16:
-	#	direction = Vector2(-1, 1)
-	if position.y > 272-32:
-		queue_free()
-	direction.x = -direction.x
-
+	if !Global.gameover:
+		position += direction * Global.GRIDSIZE
+		if direction.x == -1.0:
+			$AnimatedSprite.play("left")
+		else:
+			$AnimatedSprite.play("right")
+		if position.y > 272-32:
+			queue_free()
+		direction.x = -direction.x
 
 func _on_area_entered(area: Area2D) -> void:
 	pass

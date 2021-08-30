@@ -8,6 +8,7 @@ const WINSCORE := 5
 var score := 0
 var highscore := 0
 var worldtime := 0
+var won := false
 
 var gameover := false
 var firstrun := true

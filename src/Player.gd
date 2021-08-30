@@ -50,8 +50,14 @@ func game_over():
 	if Global.score > Global.highscore:
 		Global.highscore = Global.score
 	Global.gameover = true
-	$GameOverSound.play()
-	yield($GameOverSound, "finished")
+	if Global.won:
+		$WinSound.play()
+		yield($WinSound, "finished")
+		yield(get_tree().create_timer(3), "timeout")
+	else:
+		$GameOverSound.play()
+		yield($GameOverSound, "finished")
+		yield(get_tree().create_timer(1), "timeout")
 	get_tree().reload_current_scene()
 	Global.reset()
 
